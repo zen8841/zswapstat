@@ -218,8 +218,6 @@ Commands:
 Options:
   --all, -a                  Show all statistics and parameters
   --help, -h                 Show this help
-
-Requires root privileges.
 EOF
 }
 
@@ -254,11 +252,12 @@ dashboard | -d)
   ;;
 esac
 
-# --- preflight --------------------------------------------------------------
+# --- self-elevate -----------------------------------------------------------
 if [ "$EUID" -ne 0 ]; then
-  echo "Error: this script must be run as root (use sudo)." >&2
-  exit 1
+  exec sudo "$0" "$@"
 fi
+
+# --- preflight --------------------------------------------------------------
 
 if [ ! -d "$ZSWAP_DEBUG" ]; then
   echo "Error: $ZSWAP_DEBUG not found. Mount debugfs and enable zswap." >&2
